@@ -1,0 +1,27 @@
+{
+  "name": "WNC-Final-Project-Online-Academy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/518184/WNC-Final-Project-Online-Academy.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/518184/WNC-Final-Project-Online-Academy/issues"
+  },
+  "homepage": "https://github.com/518184/WNC-Final-Project-Online-Academy#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "knex": "^0.21.14",
+    "morgan": "^1.10.0",
+    "mysql2": "^2.2.5"
+  }
+}
