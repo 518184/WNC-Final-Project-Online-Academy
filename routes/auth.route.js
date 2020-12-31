@@ -23,7 +23,7 @@ router.post('/', async function (req, res) {
     const accessToken = jwt.sign({
         userID: user.id
     }, 'SECRET_KEY', {
-        expiresIn: 5
+        expiresIn: 60 * 10
     })
 
     const refreshToken = randomstring.generate();

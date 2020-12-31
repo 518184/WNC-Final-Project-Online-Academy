@@ -22,11 +22,13 @@ module.exports = {
     },
 
     async add(user){
+        user.createDate = new Date();
         const ids = await db('user').insert(user);
         return ids[0];
     },
 
     update(user, id){
+        user.modifiedDate = new Date();
         return db('user').where('id', id).update(user);
     },
 
@@ -35,7 +37,7 @@ module.exports = {
     },
 
     updateRefreshToken(id, refreshToken){
-      return db('user').where('id', id).update('rfToken', refreshToken);
+      return db('user').where('id', id).update('rfToken', refreshToken).update('modifiedDate', new Date());
     },
 
     async isValidRefreshToken(id, refreshToken) {

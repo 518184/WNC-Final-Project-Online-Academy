@@ -3,7 +3,7 @@ const app = express();
 const morgan = require('morgan');
 const auth = require('./middlewares/auth.mdw');
 require('express-async-errors');
-require('dotenv').config()
+require('dotenv').config();
 
 const cors = require('cors');
 
