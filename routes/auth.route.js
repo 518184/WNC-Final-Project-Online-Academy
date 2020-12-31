@@ -6,21 +6,21 @@ const userModel = require('../models/user.model');
 
 const router = express.Router();
 
-router.post('/', async function(req, res) {
+router.post('/', async function (req, res) {
     const user = await userModel.singleByUserName(req.body.username);
-    if(user === null) {
+    if (user === null) {
         return res.json({
             authenticated: false
         });
     }
 
-    if(!bcrypt.compareSync(req.body.password, user.password)){
+    if (!bcrypt.compareSync(req.body.password, user.password)) {
         return res.json({
             authenticated: false
         });
     }
 
-    const accessToken = jwt.sign({ 
+    const accessToken = jwt.sign({
         userID: user.id
     }, 'SECRET_KEY', {
         expiresIn: 5
@@ -36,14 +36,14 @@ router.post('/', async function(req, res) {
     });
 })
 
-router.post('/refresh', async function(req, res){
+router.post('/refresh', async function (req, res) {
 
     const { accessToken, refreshToken } = req.body;
-    const { userID } = jwt.verify(req.body.accessToken, 'SECRET_KEY', {
+    const { userID } = jwt.verify(accessToken, 'SECRET_KEY', {
         ignoreExpiration: true
     });
     const ret = await userModel.isValidRefreshToken(userID, refreshToken);
-    if(ret === true) {
+    if (ret === true) {
         const newAccessToken = jwt.sign({ userID }, 'SECRET_KEY', { expiresIn: 60 * 10 })
         return res.json({
             accessToken: newAccessToken

@@ -2,11 +2,11 @@ const db = require('../utils/db')
 
 module.exports = {
     all(){
-        return db('users');
+        return db('user');
     },
 
     async single(id){
-        const users = await db('users').where('id', id);
+        const users = await db('user').where('id', id);
         if(users.length === 0){
             return null;
         }
@@ -14,7 +14,7 @@ module.exports = {
     },
 
     async singleByUserName(username){
-        const users = await db('users').where('username', username);
+        const users = await db('user').where('username', username);
         if(users.length === 0){
             return null;
         }
@@ -22,16 +22,24 @@ module.exports = {
     },
 
     async add(user){
-        const ids = await db('users').insert(user);
+        const ids = await db('user').insert(user);
         return ids[0];
     },
 
+    update(user, id){
+        return db('user').where('id', id).update(user);
+    },
+
+    del(id){
+        return db('user').where('id', id).update('isDeleted', true);
+    },
+
     updateRefreshToken(id, refreshToken){
-      return db('users').where('id', id).update('rfToken', refreshToken);
+      return db('user').where('id', id).update('rfToken', refreshToken);
     },
 
     async isValidRefreshToken(id, refreshToken) {
-        const list = await db('users').where('id', id).andWhere('rfToken', refreshToken);
+        const list = await db('user').where('id', id).andWhere('rfToken', refreshToken);
         if(list.length > 0) {
             return true;
         }

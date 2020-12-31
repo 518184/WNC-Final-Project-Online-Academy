@@ -1,0 +1,12 @@
+{
+    "additionalProperties": false,
+    "type": "object",
+    "properties": {
+        "email": {
+            "type": "string"
+        },
+        "fullname": {
+            "type": "string"
+        }
+    }
+}
