@@ -6,22 +6,20 @@ const validate = require('../middlewares/validate.mdw');
 const router = express.Router();
 
 router.get('/', async function(req, res){
-    const list = await subjectModel.all();
-    res.json(list);
+    var title, result;
+    if(typeof req.query.title !== 'undefined'){
+        title = req.query.title;
+        result = await subjectModel.singleBySubjectTitle(title);
+    }
+    else{
+        result = await subjectModel.all();
+    }
+    res.json(result);
 });
 
 router.get('/:id', async function(req, res){
     const id = req.params.id || 0;
     const subject = await subjectModel.single(id);
-    if (subject === null){
-        return res.status(204).end();
-    }
-    res.json(subject);
-});
-
-router.get('/titles/:title', async function(req, res){
-    const title = req.params.title || 0;
-    const subject = await subjectModel.singleBySubjectTitle(title);
     if (subject === null){
         return res.status(204).end();
     }
