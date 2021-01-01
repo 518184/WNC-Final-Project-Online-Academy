@@ -1,5 +1,5 @@
 const path = require('path')
-require('dotenv').config({ path: path.resolve('./config/.env') })
+require('dotenv').config({ path: path.resolve('./config/configDB.env') })
 const knex = require('knex')({
   client: 'mysql2',
   connection: {
