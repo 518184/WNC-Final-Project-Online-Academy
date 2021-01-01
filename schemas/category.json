@@ -1,0 +1,13 @@
+{
+    "required": [
+        "title"
+
+    ],
+    "additionalProperties": false,
+    "type": "object",
+    "properties": {
+        "title": {
+            "type": "string"
+        }
+    }
+}
