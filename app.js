@@ -3,8 +3,8 @@ const app = express();
 const morgan = require('morgan');
 const auth = require('./middlewares/auth.mdw');
 require('express-async-errors');
-require('dotenv').config();
-
+const path = require('path')
+require('dotenv').config({ path: path.resolve(__dirname, 'config/.env') })
 const cors = require('cors');
 
 const PORT = process.env.PORT || 3000;
