@@ -16,6 +16,15 @@
         },
         "point": {
             "type": "number"
+        },
+        "content": {
+            "type": "number"
+        },
+        "createdBy": {
+            "type": "string"
+        },
+        "modifiedBy": {
+            "type": "string"
         }
     }
 }

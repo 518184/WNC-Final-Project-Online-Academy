@@ -20,6 +20,12 @@
         },
         "courseId": {
             "type": "number"
+        },
+        "createdBy": {
+            "type": "string"
+        },
+        "modifiedBy": {
+            "type": "string"
         }
     }
 }

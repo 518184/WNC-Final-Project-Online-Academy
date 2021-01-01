@@ -8,6 +8,15 @@
     "properties": {
         "title": {
             "type": "string"
+        },
+        "description":{
+            "type":"string"
+        },
+        "createdBy": {
+            "type": "string"
+        },
+        "modifiedBy": {
+            "type": "string"
         }
     }
 }
