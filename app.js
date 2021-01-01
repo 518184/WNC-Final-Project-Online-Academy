@@ -23,6 +23,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', require('./routes/auth.route'));
 app.use('/api/users', require('./routes/user.route'));
+app.use('/api/subjects', require('./routes/subject.route'));
 
 app.use((req, res, next) => {
     res.status(404).send({

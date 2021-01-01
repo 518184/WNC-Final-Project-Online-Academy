@@ -1,0 +1,25 @@
+{
+    "required": [
+        "title",
+        "thumbnail",
+        "content",
+        "courseId"
+
+    ],
+    "additionalProperties": false,
+    "type": "object",
+    "properties": {
+        "title": {
+            "type": "string"
+        },
+        "thumbnail": {
+            "type": "string"
+        },
+        "content": {
+            "type": "string"
+        },
+        "courseId": {
+            "type": "number"
+        }
+    }
+}
