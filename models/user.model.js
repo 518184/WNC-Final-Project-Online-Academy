@@ -22,7 +22,7 @@ module.exports = {
     },
 
     async add(user){
-        user.createDate = new Date();
+        user.createdDate = new Date();
         const ids = await db('user').insert(user);
         return ids[0];
     },
