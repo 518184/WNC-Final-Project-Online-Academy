@@ -1,0 +1,18 @@
+{
+    "additionalProperties": false,
+    "type": "object",
+    "properties": {
+        "userId": {
+            "type": "string"
+        },
+        "courseId": {
+            "type": "string"
+        },
+        "isPayment": {
+            "type": "boolean"
+        },
+        "isDeleted": {
+            "type": "boolean"
+        }
+    }
+}
