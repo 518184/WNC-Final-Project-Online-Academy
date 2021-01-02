@@ -1,24 +1,22 @@
 {
     "required": [
-        "courseID",
-        "userID",
         "point"
 
     ],
     "additionalProperties": false,
     "type": "object",
     "properties": {
-        "courseID": {
+        "courseId": {
             "type": "number"
         },
-        "userID": {
+        "userId": {
             "type": "number"
         },
         "point": {
             "type": "number"
         },
         "content": {
-            "type": "number"
+            "type": "string"
         },
         "createdBy": {
             "type": "string"

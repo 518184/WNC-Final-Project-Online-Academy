@@ -21,6 +21,14 @@ module.exports = {
         return feedBacks[0];
     },
 
+    async singleByUserIdAndCourseId(userId, courseId){
+        const feedbacks = await db('feed_back').where('userId', userId).andWhere('courseId', courseId).andWhere('isDeleted', false);
+        if(feedbacks.length === 0){
+            return null;
+        }
+        return feedbacks[0];
+    },
+
     async add(feedBack){
         feedBack.createdDate = new Date();
         const ids = await db('feed_back').insert(feedBack);

@@ -23,10 +23,10 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', require('./routes/auth.route'));
 app.use('/api/users', require('./routes/user.route'));
-app.use('/api/subjects', require('./routes/subject.route'));
-app.use('/api/feedbacks', require('./routes/feed_back.route'));
-app.use('/api/categories', require('./routes/category.route'));
-app.use('/api/courses', require('./routes/course.route'));
+app.use('/api/subjects', auth, require('./routes/subject.route'));
+app.use('/api/feedbacks', auth, require('./routes/feed_back.route'));
+app.use('/api/categories', auth, require('./routes/category.route'));
+app.use('/api/courses', auth, require('./routes/course.route'));
 
 app.use((req, res, next) => {
     res.status(404).send({

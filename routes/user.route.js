@@ -22,19 +22,19 @@ router.get('/', auth, async function (req, res) {
 
 router.get('/:id', auth, async function (req, res) {
     const id = req.params.id || 0;
-    const customerSpec = await userModel.single(id);
-    if (customerSpec === null) {
+    const user = await userModel.single(id);
+    if (user === null) {
         return res.status(204).end();
     }
-    res.json(customerSpec);
+    res.json(user);
 });
 
 router.put('/:id', auth, validate(user_schema), async function (req, res) {
     const id = req.params.id;
-    const customer = req.body;
-    const id_list = await userModel.update(customer, id);
-    customer.customer_id = id_list[0];
-    res.status(200).json(customer);
+    const user = req.body;
+    const id_list = await userModel.update(user, id);
+    user.id = id_list[0];
+    res.status(200).json(user);
 });
 
 router.delete('/:id', auth, async function (req, res) {

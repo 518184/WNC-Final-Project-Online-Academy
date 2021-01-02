@@ -6,15 +6,15 @@ module.exports = {
     },
 
     async single(id){
-        const users = await db('user').where('id', id);
+        const users = await db('user').where('id', id).andWhere('isDeleted', false);
         if(users.length === 0){
             return null;
         }
         return users[0];
     },
 
-    async singleByUserName(username){
-        const users = await db('user').where('username', username);
+    async singleByEmail(email){
+        const users = await db('user').where('email', email).andWhere('isDeleted', false);
         if(users.length === 0){
             return null;
         }

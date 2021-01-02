@@ -7,7 +7,7 @@ module.exports = {
     },
 
     async single(id){
-        const courseSpec = await db('course').where('id', id);
+        const courseSpec = await db('course').where('id', id).andWhere('isDeleted', false);
         if(courseSpec.length === 0){
             return null;
         }
@@ -15,6 +15,7 @@ module.exports = {
     },
 
     add(course){
+        course.createdDate = new Date();
         return db('course').insert(course);
     },
 
@@ -23,6 +24,7 @@ module.exports = {
     },
     
     update(course, id){
+        course.modifiedDate = new Date();
         return db('course').where('id', id).update(course);
     }
 };

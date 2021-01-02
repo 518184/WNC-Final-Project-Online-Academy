@@ -7,7 +7,7 @@ const userModel = require('../models/user.model');
 const router = express.Router();
 
 router.post('/', async function (req, res) {
-    const user = await userModel.singleByUserName(req.body.username);
+    const user = await userModel.singleByEmail(req.body.email);
     if (user === null) {
         return res.json({
             authenticated: false
@@ -21,7 +21,7 @@ router.post('/', async function (req, res) {
     }
 
     const accessToken = jwt.sign({
-        userID: user.id
+        userId: user.id
     }, 'SECRET_KEY', {
         expiresIn: 60 * 10
     })
