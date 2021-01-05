@@ -27,6 +27,7 @@ app.use('/api/subjects', require('./routes/subject.route'));
 app.use('/api/feedbacks', require('./routes/feedback.route'));
 app.use('/api/categories', require('./routes/category.route'));
 app.use('/api/courses', require('./routes/course.route'));
+app.use('/api/transaction', require('./routes/transaction.route'));
 
 app.use((req, res, next) => {
     res.status(404).send({
