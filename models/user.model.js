@@ -27,9 +27,9 @@ module.exports = {
         return ids[0];
     },
 
-    update(user, id){
+    async update(user, id){
         user.modifiedDate = new Date();
-        return db('user').where('id', id).update(user);
+        return await db('user').where('id', id).update(user);
     },
 
     del(id){

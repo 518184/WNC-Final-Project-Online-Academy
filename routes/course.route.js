@@ -2,43 +2,57 @@ const express = require('express');
 const courseModel = require('../models/course.model');
 const course_schema = require('../schemas/course.json');
 const validate = require('../middlewares/validate.mdw');
-const feedback_schema = require('../schemas/feed_back.json');
-const feedbackModel = require('../models/feed_back.model');
+const feedback_schema = require('../schemas/feedback.json');
+const feedbackModel = require('../models/feedback.model');
+const auth = require('../middlewares/auth.mdw');
 
 const router = express.Router();
 
-router.get('/', async function(req, res){
+router.get('/', async function (req, res) {
     const list = await courseModel.all();
     res.json(list);
 });
 
-router.get('/:id', async function(req, res){
+router.get('/:id', async function (req, res) {
     const id = req.params.id || 0;
     const courseSpec = await courseModel.single(id);
-    if(courseSpec === null){
+    if (courseSpec === null) {
         return res.status(204).end();
     }
     res.json(courseSpec);
 });
 
-router.post('/', validate(course_schema), async function(req, res){
+router.post('/', auth(2), validate(course_schema), async function (req, res) {
     const course = req.body;
+    course.teacherId = req.headers.userId;
     const id_list = await courseModel.add(course);
     course.id = id_list[0];
     res.status(201).json(course);
 });
 
-router.put('/:id', validate(course_schema), async function(req, res){
-    const id = req.params.id;
+router.put('/:id', auth(2), validate(course_schema), async function (req, res) {
+    const id = +req.params.id;
+    let dbCourse = await courseModel.single(id);
+    if (!dbCourse) {
+        return res.status(404).json({
+            message: 'CourseId: ' + id + ' doesn\'t exist'
+        });
+    }
+    if (req.headers.userId !== dbCourse.teacherId && req.headers.userType !== 3) {
+        return res.status(403).json({
+            message: 'Can\'t edit other user course'
+        });
+    }
+
     const course = req.body;
     const id_list = await courseModel.update(course, id);
     course.id = id_list[0];
     res.status(200).json(course);
 });
 
-router.delete('/:id', async function(req, res){
+router.delete('/:id', auth(3), async function (req, res) {
     const id = req.params.id || 0;
-    if(id===0){
+    if (id === 0) {
         return res.status(304).end();
     }
     await courseModel.del(id);
@@ -47,7 +61,7 @@ router.delete('/:id', async function(req, res){
     });
 });
 
-router.post('/:courseId/feedbacks', validate(feedback_schema), async function (req, res) {
+router.post('/:courseId/feedbacks', auth(1), validate(feedback_schema), async function (req, res) {
     const courseId = +req.params.courseId;
     const userId = req.headers.userId;
     const course = await courseModel.single(courseId);
@@ -61,7 +75,7 @@ router.post('/:courseId/feedbacks', validate(feedback_schema), async function (r
     feedback.userId = userId;
 
     const dbFeedback = await feedbackModel.singleByUserIdAndCourseId(userId, courseId);
-    if(dbFeedback === null){
+    if (dbFeedback === null) {
         const ids = await feedbackModel.add(feedback);
         feedback.id = ids[0];
         return res.status(201).json(feedback);
@@ -69,6 +83,18 @@ router.post('/:courseId/feedbacks', validate(feedback_schema), async function (r
     const ids = await feedbackModel.update(feedback, dbFeedback.id);
     feedback.id = ids[0];
     return res.status(200).json(feedback);
+});
+
+router.get('/:courseId/feedbacks', async function (req, res) {
+    const courseId = +req.params.courseId;
+    const course = await courseModel.single(courseId);
+    if (course === null) {
+        return res.status(404).json({
+            message: 'CourseId: ' + courseId + ' doesn\'t exist'
+        });
+    }
+    const feedbacks = await feedbackModel.findByCourseId(courseId);
+    return res.status(200).json(feedbacks);
 });
 
 module.exports = router;

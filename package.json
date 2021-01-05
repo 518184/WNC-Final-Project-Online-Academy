@@ -30,6 +30,9 @@
     "knex": "^0.21.14",
     "morgan": "^1.10.0",
     "mysql2": "^2.2.5",
+    "nodemailer": "^6.4.17",
+    "nodemailer-smtp-transport": "^2.7.4",
+    "otp-agent": "^1.0.4",
     "randomstring": "^1.1.5"
   }
 }

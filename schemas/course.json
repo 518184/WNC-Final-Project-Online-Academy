@@ -1,5 +1,5 @@
 {
-    "require": [
+    "required": [
         "title", 
         "descriptionShort", 
         "descriptionLong", 
@@ -38,9 +38,6 @@
         },
         "outline": {
             "type": "string"
-        },
-        "teacherId": {
-            "type": "integer"
         },
         "categoryId": {
             "type": "integer"

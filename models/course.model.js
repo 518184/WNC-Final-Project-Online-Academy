@@ -1,4 +1,3 @@
-const { max } = require('../utils/db');
 const db = require('../utils/db');
 
 module.exports = {

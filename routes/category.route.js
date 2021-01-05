@@ -2,6 +2,7 @@ const express = require('express');
 const categoryModel = require('../models/category.model');
 const category_schema = require('../schemas/category.json');
 const validate = require('../middlewares/validate.mdw');
+const auth = require('../middlewares/auth.mdw');
 
 const router = express.Router();
 
@@ -26,14 +27,14 @@ router.get('/:id', async function(req, res){
     res.json(category);
 });
 
-router.post('/', validate(category_schema), async function(req, res){
+router.post('/', auth(3), validate(category_schema), async function(req, res){
     const category = req.body;
     const id_list = await categoryModel.add(category);
     category.id = id_list[0];
     res.status(201).json(category);
 });
 
-router.put('/:id', validate(category_schema), async function(req, res){
+router.put('/:id', auth(3), validate(category_schema), async function(req, res){
     const id = req.params.id || 0;
     if (id === 0){
         return res.status(304).end();
@@ -44,7 +45,7 @@ router.put('/:id', validate(category_schema), async function(req, res){
     res.status(201).json(category);
 });
 
-router.delete('/:id', async function(req, res){
+router.delete('/:id', auth(3), async function(req, res){
     const id = req.params.id || 0;
     if (id === 0){
         return res.status(304).end();
