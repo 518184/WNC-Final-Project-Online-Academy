@@ -109,7 +109,7 @@ router.delete('/:id', auth(3), async function (req, res) {
     });
 });
 
-router.post('/watchlist/:id', auth(2), async function (req, res) {
+router.post('/watchlist/:id', auth(1), async function (req, res) {
     const userId = req.headers.userId;
     const courseId = +req.params.id;
     const addCourse = await courseModel.single(courseId);
