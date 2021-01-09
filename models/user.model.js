@@ -46,5 +46,9 @@ module.exports = {
             return true;
         }
         return false;
+    },
+
+    async addWatchList(userId, courseId){
+        return await db('user').where('id', userId).update('watchlist', courseId);
     }
 };

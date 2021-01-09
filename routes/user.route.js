@@ -10,6 +10,7 @@ require('dotenv').config();
 const sendMail = require('../utils/emailSender');
 const otpModel = require('../models/otp.model');
 const otpGenerator = require('otp-agent');
+const courseModel = require('../models/course.model');
 
 router.post('/', validate(user_register_schema), async function (req, res) {
     const user = req.body;
@@ -105,6 +106,17 @@ router.delete('/:id', auth(3), async function (req, res) {
     await userModel.del(id);
     res.status(200).json({
         message: 'Delete Complete!'
+    });
+});
+
+router.post('/watchlist/:id', auth(2), async function (req, res) {
+    const userId = req.headers.userId;
+    const courseId = +req.params.id;
+    const addCourse = await courseModel.single(courseId);
+    await userModel.addWatchList(userId, courseId);
+    res.status(200).json({
+        addCourse,
+        message: 'Added to watch list!'
     });
 });
 
