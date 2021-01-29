@@ -113,11 +113,22 @@ router.post('/watchlist/:id', auth(1), async function (req, res) {
     const userId = req.headers.userId;
     const courseId = +req.params.id;
     const addCourse = await courseModel.single(courseId);
-    await userModel.addWatchList(userId, courseId);
-    res.status(200).json({
-        addCourse,
-        message: 'Added to watch list!'
-    });
+    if(addCourse === null){
+        res.status(404).json({
+            message: 'Course not found!'
+        });
+    }
+    const add = await userModel.addWatchList(userId, courseId);
+    if(add === null) {
+        res.status(400).json({
+            message: 'The course already exists!'
+        })
+    } else {
+        res.status(200).json({
+            addCourse,
+            message: 'Added to watch list!'
+        });
+    }   
 });
 
 module.exports = router;

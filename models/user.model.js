@@ -1,3 +1,4 @@
+const { json } = require('express');
 const db = require('../utils/db')
 
 module.exports = {
@@ -49,6 +50,20 @@ module.exports = {
     },
 
     async addWatchList(userId, courseId){
-        return await db('user').where('id', userId).update('watchlist', courseId);
+        const getListCourse = await db('user').where('id', userId).select('watchlist');
+        const list = JSON.parse(JSON.stringify(getListCourse));
+        
+        if(list[0].watchlist === null){
+            listCourse = {courseId};
+            return await db('user').where('id', userId).update('watchlist', JSON.stringify(listCourse));
+        }
+        var listCourse = list[0].watchlist;
+        let checkCourse = listCourse.search('"courseId": ' + courseId);
+        if(checkCourse != -1){
+            return null;
+        } else {
+            listCourse = listCourse.replace('}', ', "courseId": ' + courseId + '}');
+            return await db('user').where('id', userId).update('watchlist', listCourse);
+        }
     }
 };
