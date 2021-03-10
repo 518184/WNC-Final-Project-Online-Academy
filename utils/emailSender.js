@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport(smtpTransport({
 
 module.exports = (recipient, otp) => {
   const mailOptions = {
-    from: 'learningpurpose2g21@gmail.com',
+    from: 'learningpurpose2g21wnc@gmail.com',
     to: recipient,
     subject: 'OTP for account verification',
     text: 'Please enter this code: ' + otp + ' to verify your account Academy'

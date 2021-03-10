@@ -32,7 +32,8 @@ router.post('/', async function (req, res) {
     res.json({
         authenticated: true,
         accessToken,
-        refreshToken
+        refreshToken,
+        type: user.type
     });
 })
 
