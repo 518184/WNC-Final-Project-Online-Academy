@@ -2,8 +2,8 @@ const { json } = require('express');
 const db = require('../utils/db')
 
 module.exports = {
-    all(){
-        return db('user');
+    async all(){
+        return await db('user');
     },
 
     async single(id){

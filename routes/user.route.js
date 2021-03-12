@@ -54,12 +54,12 @@ router.post('/otp/validate', auth(1), async function (req, res) {
     });
 });
 
-router.get('/', auth, async function (req, res) {
+router.get('/', auth(3), async function (req, res) {
     const list = await userModel.all();
     res.json(list);
 });
 
-router.get('/:id', async function (req, res) {
+router.get('/:id', auth(3), async function (req, res) {
     const id = +req.params.id || 0;
     const user = await userModel.single(id);
     if (user === null) {
