@@ -22,6 +22,15 @@ router.get('/:id', async function (req, res) {
     res.json(courseSpec);
 });
 
+router.get('/category/:id', async function (req, res) {
+    const id = req.params.id || 0;
+    const courseSpec = await courseModel.singleCategoryID(id);
+    if (courseSpec === null) {
+        return res.status(204).end();
+    }
+    res.json(courseSpec);
+});
+
 router.post('/', auth(2), validate(course_schema), async function (req, res) {
     const course = req.body;
     course.teacherId = req.headers.userId;

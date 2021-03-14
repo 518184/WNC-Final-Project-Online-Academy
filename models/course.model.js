@@ -12,6 +12,13 @@ module.exports = {
         }
         return courseSpec[0];
     },
+    async singleCategoryID(id){
+        const courseSpec = await db('course').where('categoryId', id).andWhere('isDeleted', false);
+        if(courseSpec.length === 0){
+            return null;
+        }
+        return courseSpec[0];
+    },
 
     add(course){
         course.createdDate = new Date();

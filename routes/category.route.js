@@ -1,5 +1,6 @@
 const express = require('express');
 const categoryModel = require('../models/category.model');
+const courseModel = require('../models/course.model');
 const category_schema = require('../schemas/category.json');
 const validate = require('../middlewares/validate.mdw');
 const auth = require('../middlewares/auth.mdw');
@@ -48,6 +49,10 @@ router.put('/:id', auth(3), validate(category_schema), async function(req, res){
 router.delete('/:id', auth(3), async function(req, res){
     const id = req.params.id || 0;
     if (id === 0){
+        return res.status(304).end();
+    }
+    let course = await courseModel.singleCategoryID(id);
+    if (course == null) {
         return res.status(304).end();
     }
     await categoryModel.del(id);
