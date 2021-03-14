@@ -15,7 +15,7 @@ router.get('/', async function(req, res){
     else{
         result = await categoryModel.all();
     }
-    res.json(result);
+    res.status(200).json(result);
 });
 
 router.get('/:id', async function(req, res){
@@ -24,7 +24,7 @@ router.get('/:id', async function(req, res){
     if (category === null){
         return res.status(204).end();
     }
-    res.json(category);
+    res.status(200).json(category);
 });
 
 router.post('/', auth(3), validate(category_schema), async function(req, res){
@@ -51,7 +51,7 @@ router.delete('/:id', auth(3), async function(req, res){
         return res.status(304).end();
     }
     await categoryModel.del(id);
-    res.json({
+    res.status(200).json({
         message: 'OK'
     });
 });

@@ -15,7 +15,12 @@ const courseModel = require('../models/course.model');
 router.post('/', validate(user_register_schema), async function (req, res) {
     const user = req.body;
     user.password = bcrypt.hashSync(user.password, 10);
-    user.isActive = Boolean(process.env.SKIP_OTP==='true');
+    if (user.type === 1) {
+        user.isActive = Boolean(process.env.SKIP_OTP==='true');
+    } else {
+        user.isActive = true;
+    }
+    
     const dbUser = await userModel.singleByEmail(user.email);
     if (dbUser) {
         return res.status(400).json({

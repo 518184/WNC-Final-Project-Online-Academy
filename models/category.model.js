@@ -1,12 +1,12 @@
 const db = require('../utils/db')
 
 module.exports = {
-    all(){
-        return db('category');
+    async all(){
+        return await db('category').andWhere('isDeleted', false);
     },
 
     async single(id){
-        const category = await db('category').where('id', id);
+        const category = await db('category').where('id', id).andWhere('isDeleted', false);
         if(category.length === 0){
             return null;
         }
@@ -14,7 +14,7 @@ module.exports = {
     },
 
     async singleByCategoryTitle(title){
-        const category = await db('category').where('title', title);
+        const category = await db('category').where('title', title).andWhere('isDeleted', false);
         if(category.length === 0){
             return null;
         }
@@ -29,10 +29,10 @@ module.exports = {
 
     update(category, id){
         category.modifiedDate = new Date();
-        return db('category').where('id', id).update(category);
+        return db('category').where('id', id).andWhere('isDeleted', false).update(category);
     },
 
     del(id){
-        return db('category').where('id', id).update('isDeleted', true);
+        return db('category').where('id', id).andWhere('isDeleted', false).update('isDeleted', true);
     }
 };
