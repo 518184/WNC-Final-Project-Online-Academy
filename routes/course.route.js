@@ -19,7 +19,7 @@ router.get('/:id', async function (req, res) {
     if (courseSpec === null) {
         return res.status(204).end();
     }
-    res.json(courseSpec);
+    res.status(200).json(courseSpec);
 });
 
 router.get('/category/:id', async function (req, res) {
@@ -28,7 +28,7 @@ router.get('/category/:id', async function (req, res) {
     if (courseSpec === null) {
         return res.status(204).end();
     }
-    res.json(courseSpec);
+    res.status(200).json(courseSpec);
 });
 
 router.post('/', auth(2), validate(course_schema), async function (req, res) {

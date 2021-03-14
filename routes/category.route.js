@@ -52,7 +52,7 @@ router.delete('/:id', auth(3), async function(req, res){
         return res.status(304).end();
     }
     let course = await courseModel.singleCategoryID(id);
-    if (course == null) {
+    if (course != null) {
         return res.status(304).end();
     }
     await categoryModel.del(id);

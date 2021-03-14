@@ -26,11 +26,11 @@ module.exports = {
     },
 
     del(id){
-        return db('course').where('id', id).del();
+        return db('course').where('id', id).andWhere('isDeleted', false).del();
     },
     
     update(course, id){
         course.modifiedDate = new Date();
-        return db('course').where('id', id).update(course);
+        return db('course').where('id', id).andWhere('isDeleted', false).update(course);
     }
 };
