@@ -12,6 +12,12 @@
         "description":{
             "type":"string"
         },
+        "level":{
+            "type":"number"
+        },
+        "owned":{
+            "type":"number"
+        },
         "createdBy": {
             "type": "string"
         },

@@ -5,6 +5,12 @@ module.exports = {
     async all(){
         return await db('user').where('isDeleted', false);
     },
+    async allTeacher(){
+        return await db('user').where('isDeleted', false).andWhere('type', 2);
+    },
+    async allStudent(){
+        return await db('user').where('isDeleted', false).andWhere('type', 1);
+    },
 
     async single(id){
         const users = await db('user').where('id', id).andWhere('isDeleted', false);

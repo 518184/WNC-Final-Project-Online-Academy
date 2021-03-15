@@ -38,9 +38,21 @@ router.post('/', auth(3), validate(category_schema), async function(req, res){
 router.put('/:id', auth(3), validate(category_schema), async function(req, res){
     const id = req.params.id || 0;
     if (id === 0){
-        return res.status(304).end();
+        return res.status(304).json({message: "ID not found"});
     }
     const category = req.body;
+    if (category.level != 1) {
+        let checkCategoryOwned = await categoryModel.single(category.owned);
+        if (!checkCategoryOwned || checkCategoryOwned.level >= category.level) {
+            return res.status(304).json({message: "Owned not found"});
+        }
+    }
+    else {
+        if (category.owned != 0) {
+            return res.status(304).json({message:"Not allow owned"});
+        }
+    }
+    
     const id_list = await categoryModel.update(category, id);
     category.id = id_list[0];
     res.status(201).json(category);
