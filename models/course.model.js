@@ -26,7 +26,7 @@ module.exports = {
     },
 
     del(id){
-        return db('course').where('id', id).andWhere('isDeleted', false).del();
+        return db('course').where('id', id).andWhere('isDeleted', false).update('isDeleted', true);
     },
     
     update(course, id){
