@@ -1,7 +1,7 @@
 const express = require('express');
 const courseModel = require('../models/course.model');
-const userModel = require('../models/course.model');
-const categoryModel = require('../models/course.model');
+const userModal = require('../models/user.model');
+const categoryModel = require('../models/category.model');
 const course_schema = require('../schemas/course.json');
 const validate = require('../middlewares/validate.mdw');
 const feedback_schema = require('../schemas/feedback.json');
@@ -36,16 +36,16 @@ router.get('/category/:id', async function (req, res) {
 router.post('/', auth(2), validate(course_schema), async function (req, res) {
     const course = req.body;
     course.teacherId = req.headers.userId;
-    let userid = await userModal.single(course.teacherId);
+    let userid = await userModal.singleIDTeacher(course.teacherId);
     if (!userid) {
         return res.status(404).json({
-            message: 'CourseId: ' + id + ' doesn\'t exist'
+            message: 'Not allow user ID: ' + course.teacherId
         });
     }
     let categoryid = await categoryModel.single(course.categoryId);
     if (!categoryid) {
         return res.status(404).json({
-            message: 'Category: ' + id + ' doesn\'t exist'
+            message: 'Category: ' + course.categoryId + ' doesn\'t exist'
         });
     }
     const id_list = await courseModel.add(course);
@@ -55,6 +55,7 @@ router.post('/', auth(2), validate(course_schema), async function (req, res) {
 
 router.put('/:id', auth(2), validate(course_schema), async function (req, res) {
     const id = +req.params.id;
+    const course = req.body;
     let dbCourse = await courseModel.single(id);
     if (!dbCourse) {
         return res.status(404).json({
@@ -66,8 +67,19 @@ router.put('/:id', auth(2), validate(course_schema), async function (req, res) {
             message: 'Can\'t edit other user course'
         });
     }
-
-    const course = req.body;
+    let userid = await userModal.singleIDTeacher(course.teacherId);
+    if (!userid) {
+        return res.status(404).json({
+            message: 'Not allow user ID: ' + course.teacherId
+        });
+    }
+    let categoryid = await categoryModel.single(course.categoryId);
+    if (!categoryid) {
+        return res.status(404).json({
+            message: 'Category: ' + course.categoryId + ' doesn\'t exist'
+        });
+    }
+    
     const id_list = await courseModel.update(course, id);
     course.id = id_list[0];
     res.status(200).json(course);

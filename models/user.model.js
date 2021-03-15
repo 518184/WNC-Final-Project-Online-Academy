@@ -13,7 +13,13 @@ module.exports = {
         }
         return users[0];
     },
-
+    async singleIDTeacher(id){
+        const users = await db('user').where('id', id).andWhere('isDeleted', false).andWhere('type', 2);
+        if(users.length === 0){
+            return null;
+        }
+        return users[0];
+    },
     async singleByEmail(email){
         const users = await db('user').where('email', email).andWhere('isDeleted', false);
         if(users.length === 0){
