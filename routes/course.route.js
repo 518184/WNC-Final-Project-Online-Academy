@@ -1,5 +1,7 @@
 const express = require('express');
 const courseModel = require('../models/course.model');
+const userModel = require('../models/course.model');
+const categoryModel = require('../models/course.model');
 const course_schema = require('../schemas/course.json');
 const validate = require('../middlewares/validate.mdw');
 const feedback_schema = require('../schemas/feedback.json');
@@ -34,6 +36,18 @@ router.get('/category/:id', async function (req, res) {
 router.post('/', auth(2), validate(course_schema), async function (req, res) {
     const course = req.body;
     course.teacherId = req.headers.userId;
+    let userid = await userModal.single(course.teacherId);
+    if (!userid) {
+        return res.status(404).json({
+            message: 'CourseId: ' + id + ' doesn\'t exist'
+        });
+    }
+    let categoryid = await categoryModel.single(course.categoryId);
+    if (!categoryid) {
+        return res.status(404).json({
+            message: 'Category: ' + id + ' doesn\'t exist'
+        });
+    }
     const id_list = await courseModel.add(course);
     course.id = id_list[0];
     res.status(201).json(course);

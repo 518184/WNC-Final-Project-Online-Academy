@@ -42,6 +42,9 @@
         "categoryId": {
             "type": "integer"
         },
+        "teacherId": {
+            "type": "integer"
+        },
         "createdBy": {
             "type": "string"
         },

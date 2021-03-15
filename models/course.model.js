@@ -2,7 +2,7 @@ const db = require('../utils/db');
 
 module.exports = {
     all(){
-        return db('course');
+        return db('course').where('isDeleted', false);
     },
 
     async single(id){
