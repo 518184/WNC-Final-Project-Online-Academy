@@ -4,9 +4,12 @@ module.exports = {
     all() {
         return db('transaction');
     },
+    async allWithUser(userId) {
+        return await db('transaction').where('userId', userId).andWhere('isDeleted', false).andWhere('isPayment', true);
+    },
 
     async single(id){
-        const transactionSpec = await db('transaction').where('id', id);
+        const transactionSpec = await db('transaction').where('id', id).andWhere('isDeleted', false);
         if(transactionSpec.length === 0){
             return null;
         }

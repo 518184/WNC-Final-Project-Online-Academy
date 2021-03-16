@@ -72,7 +72,7 @@ router.get('/student', auth(3), async function (req, res) {
     res.json(list);
 });
 
-router.get('/:id', auth(3), async function (req, res) {
+router.get('/:id', auth(1), async function (req, res) {
     const id = +req.params.id || 0;
     const user = await userModel.single(id);
     if (user === null) {

@@ -2,15 +2,16 @@ const express = require('express');
 const transactionModel = require('../models/transaction.model');
 const transaction_schema = require('../schemas/transaction.json');
 const validate = require('../middlewares/validate.mdw');
+const auth = require('../middlewares/auth.mdw');
 
 const router = express.Router();
 
-router.get('/', async function(req, res){
+router.get('/', auth(1), async function(req, res){
     const list = await transactionModel.all();
     res.json(list);
 });
 
-router.get('/:id', async function(req, res){
+router.get('/:id', auth(1), async function(req, res){
     const id = req.params.id || 0;
     const transaction = await transactionModel.single(id);
     if (transaction === null){
@@ -18,8 +19,16 @@ router.get('/:id', async function(req, res){
     }
     res.json(transaction);
 });
+router.get('/user/:userID', auth(1), async function(req, res){
+    const id = req.params.userID || 0;
+    const transaction = await transactionModel.allWithUser(id);
+    if (transaction === null){
+        return res.status(204).end();
+    }
+    res.json(transaction);
+});
 
-router.post('/', validate(transaction_schema), async function(req, res){
+router.post('/', auth(1), validate(transaction_schema), async function(req, res){
     const userId = +req.headers.userId;
     const transaction = req.body;
     const id_list = await transactionModel.add(userId, transaction);
@@ -27,7 +36,7 @@ router.post('/', validate(transaction_schema), async function(req, res){
     res.status(201).json(transaction);
 });
 
-router.put('/:transactionId/payment', validate(transaction_schema), async function(req, res){
+router.put('/:transactionId/payment', auth(1), validate(transaction_schema), async function(req, res){
     const transactionId = +req.params.transactionId || 0;
     const transaction = await transactionModel.single(transactionId);
     if(transaction === null){
@@ -49,7 +58,7 @@ router.put('/:transactionId/payment', validate(transaction_schema), async functi
     });
 });
 
-router.put('/:transactionId/delete', validate(transaction_schema), async function(req, res){
+router.put('/:transactionId/delete', auth(1), validate(transaction_schema), async function(req, res){
     const transactionId = +req.params.transactionId;
     const transaction = await transactionModel.single(transactionId);
     if(transaction === null){

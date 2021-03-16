@@ -66,16 +66,16 @@ module.exports = {
         const list = JSON.parse(JSON.stringify(getListCourse));
         
         if(list[0].watchlist === null){
-            listCourse = {courseId};
-            return await db('user').where('id', userId).update('watchlist', JSON.stringify(listCourse));
-        }
-        var listCourse = list[0].watchlist;
-        let checkCourse = listCourse.search('"courseId": ' + courseId);
-        if(checkCourse != -1){
-            return null;
+            let jsonInit = {};
+            jsonInit.course = [];
+            jsonInit.course.push(courseId);
+            return await db('user').where('id', userId).update('watchlist', JSON.stringify(jsonInit));
         } else {
-            listCourse = listCourse.replace('}', ', "courseId": ' + courseId + '}');
-            return await db('user').where('id', userId).update('watchlist', listCourse);
+            let jsonTemp = JSON.parse(list[0].watchlist);
+            let listTemp = jsonTemp.course;
+            listTemp.push(courseId)
+            jsonTemp.course = listTemp;
+            return await db('user').where('id', userId).update('watchlist', JSON.stringify(jsonTemp));
         }
     }
 };
