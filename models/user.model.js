@@ -77,5 +77,29 @@ module.exports = {
             jsonTemp.course = listTemp;
             return await db('user').where('id', userId).update('watchlist', JSON.stringify(jsonTemp));
         }
+    },
+    async delWatchList(userId, courseId){
+        Array.prototype.remove = function() {
+            var what, a = arguments, L = a.length, ax;
+            while (L && this.length) {
+                what = a[--L];
+                while ((ax = this.indexOf(what)) !== -1) {
+                    this.splice(ax, 1);
+                }
+            }
+            return this;
+        };
+        const getListCourse = await db('user').where('id', userId).select('watchlist');
+        const list = JSON.parse(JSON.stringify(getListCourse));
+        
+        if(list[0].watchlist === null){
+            return null;
+        } else {
+            let jsonTemp = JSON.parse(list[0].watchlist);
+            let listTemp = jsonTemp.course;
+            listTemp.remove(courseId);
+            jsonTemp.course = listTemp;
+            return await db('user').where('id', userId).update('watchlist', JSON.stringify(jsonTemp));
+        }
     }
 };
