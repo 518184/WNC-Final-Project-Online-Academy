@@ -6,7 +6,7 @@ module.exports = {
         return await db('user').where('isDeleted', false);
     },
     async allTeacher(){
-        return await db('user').where('isDeleted', false).andWhere('type', 2);
+        return await db('user').where('isDeleted', false).andWhere('type', 2).orWhere('type', 1);
     },
     async allStudent(){
         return await db('user').where('isDeleted', false).andWhere('type', 1);

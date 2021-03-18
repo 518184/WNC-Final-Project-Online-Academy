@@ -67,6 +67,11 @@ router.get('/teacher', auth(3), async function (req, res) {
     const list = await userModel.allTeacher();
     res.json(list);
 });
+
+router.get('/allteacher', async function (req, res) {
+    const list = await userModel.allTeacher();
+    res.json(list);
+});
 router.get('/student', auth(3), async function (req, res) {
     const list = await userModel.allStudent();
     res.json(list);
