@@ -9,6 +9,10 @@ const feedbackModel = require('../models/feedback.model');
 const auth = require('../middlewares/auth.mdw');
 
 const router = express.Router();
+const formidable = require('formidable');
+const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
+const path = require('path');
 
 router.get('/', async function (req, res) {
     const list = await courseModel.all();
@@ -33,24 +37,70 @@ router.get('/category/:id', async function (req, res) {
     res.status(200).json(courseSpec);
 });
 
-router.post('/', auth(2), validate(course_schema), async function (req, res) {
-    const course = req.body;
-    course.teacherId = req.headers.userId;
-    let userid = await userModal.singleIDTeacher(course.teacherId);
-    if (!userid) {
-        return res.status(404).json({
-            message: 'Not allow user ID: ' + course.teacherId
-        });
+router.post('/', auth(2), async function (req, res) {
+    const publicDir = path.join(__dirname, '../public/');
+
+    const uploadDir = publicDir + uuidv4();
+
+    if (!fs.existsSync(publicDir)) {
+        fs.mkdirSync(publicDir);
     }
-    let categoryid = await categoryModel.single(course.categoryId);
-    if (!categoryid) {
-        return res.status(404).json({
-            message: 'Category: ' + course.categoryId + ' doesn\'t exist'
-        });
+    if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir);
     }
-    const id_list = await courseModel.add(course);
-    course.id = id_list[0];
-    res.status(201).json(course);
+
+    const form = formidable({ multiples: true, uploadDir, keepExtensions: true, maxFileSize: 500 * 1024 * 1024 });
+
+    let course = {};
+
+    form.on('field', function (fieldName, fieldValue) {
+        if (fieldName === 'metadata') {
+            course = JSON.parse(fieldValue);
+        }
+
+    });
+
+    let uploadFilenames = []
+    form.on('file', function (field, file) {
+        const uploadName = uuidv4() + '.' + file.type.split('/')[1];
+        fs.rename(file.path, form.uploadDir + "/" + uuidv4() + '.' + file.type.split('/')[1], (err) => {
+            uploadFilenames.push(uploadName);
+            console.log(uploadName)
+            if (err) {
+                throw new Error(err);
+            }
+        });
+    });
+
+    form.parse(req, (err, fields, files) => {
+        if (err) {
+            throw new Error(err);
+        }
+    })
+
+    form.on('end', async () => {
+        course.teacherId = req.headers.userId;
+        let userid = await userModal.singleIDTeacher(course.teacherId);
+        if (!userid) {
+            return res.status(404).json({
+                message: 'Not allow user ID: ' + course.teacherId
+            });
+        }
+        let categoryid = await categoryModel.single(course.categoryId);
+        if (!categoryid) {
+            return res.status(404).json({
+                message: 'Category: ' + course.categoryId + ' doesn\'t exist'
+            });
+        }
+        course.outline.uploadFilenames = uploadFilenames;
+        course.outline.uploadDir = uploadDir;
+        course.outline = JSON.stringify(course.outline);
+        course.thumbnail = "LATER";
+        const id_list = await courseModel.add(course);
+        course.id = id_list[0];
+        res.status(201).json(course);
+    })
+
 });
 
 router.put('/:id', auth(2), validate(course_schema), async function (req, res) {
@@ -79,7 +129,7 @@ router.put('/:id', auth(2), validate(course_schema), async function (req, res) {
             message: 'Category: ' + course.categoryId + ' doesn\'t exist'
         });
     }
-    
+
     const id_list = await courseModel.update(course, id);
     course.id = id_list[0];
     res.status(200).json(course);
