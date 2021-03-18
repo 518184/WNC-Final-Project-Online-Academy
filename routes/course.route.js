@@ -38,12 +38,13 @@ router.get('/category/:id', async function (req, res) {
 });
 
 router.post('/', auth(2), async function (req, res) {
-    const publicDir = path.join(__dirname, '../public/');
+    const resourceDir = path.join(__dirname, '../resources/');
 
-    const uploadDir = publicDir + uuidv4();
+    const uuid = uuidv4()
+    const uploadDir = resourceDir + uuid;
 
-    if (!fs.existsSync(publicDir)) {
-        fs.mkdirSync(publicDir);
+    if (!fs.existsSync(resourceDir)) {
+        fs.mkdirSync(resourceDir);
     }
     if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir);
@@ -63,9 +64,8 @@ router.post('/', auth(2), async function (req, res) {
     let uploadFilenames = []
     form.on('file', function (field, file) {
         const uploadName = uuidv4() + '.' + file.type.split('/')[1];
-        fs.rename(file.path, form.uploadDir + "/" + uuidv4() + '.' + file.type.split('/')[1], (err) => {
+        fs.rename(file.path, form.uploadDir + "/" + uploadName, (err) => {
             uploadFilenames.push(uploadName);
-            console.log(uploadName)
             if (err) {
                 throw new Error(err);
             }
@@ -93,13 +93,54 @@ router.post('/', auth(2), async function (req, res) {
             });
         }
         course.outline.uploadFilenames = uploadFilenames;
-        course.outline.uploadDir = uploadDir;
+        course.outline.uploadDir = uuid + "/";
         course.outline = JSON.stringify(course.outline);
         course.thumbnail = "LATER";
         const id_list = await courseModel.add(course);
         course.id = id_list[0];
         res.status(201).json(course);
     })
+
+});
+
+router.get("/:courseId/resources/:resourceId", async (req, res) => {
+
+    const courseId = +req.params.courseId;
+    const resourceId = req.params.resourceId;
+
+    const course = await courseModel.single(courseId);
+    const outline = JSON.parse(course.outline)
+
+    const videoPath = path.join(__dirname, '../resources/' + outline.uploadDir + resourceId);
+    const stat = fs.statSync(videoPath);
+    const fileSize = stat.size;
+    const contentType = 'video/' + resourceId.split(".")[1];
+
+    const range = req.headers.range;
+    if (range) {
+        const parts = range.replace(/bytes=/, "").split("-");
+        const start = parseInt(parts[0], 10);
+        const end = parts[1]
+            ? parseInt(parts[1], 10)
+            : fileSize - 1;
+        const chunksize = (end - start) + 1;
+        const file = fs.createReadStream(videoPath, { start, end });
+        const head = {
+            'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+            'Accept-Ranges': 'bytes',
+            'Content-Length': chunksize,
+            'Content-Type': contentType,
+        };
+        res.writeHead(206, head);
+        file.pipe(res);
+    } else {
+        const head = {
+            'Content-Length': fileSize,
+            'Content-Type': contentType,
+        };
+        res.writeHead(200, head);
+        fs.createReadStream(videoPath).pipe(res);
+    }
 
 });
 
