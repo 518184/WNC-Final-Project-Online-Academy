@@ -6,7 +6,7 @@
             "type": "string"
         },
         "courseId": {
-            "type": "string"
+            "type": "integer"
         },
         "isPayment": {
             "type": "boolean"

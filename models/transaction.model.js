@@ -16,10 +16,18 @@ module.exports = {
         return transactionSpec[0];
     },
 
-    add(userId, transaction) {
+    async add(userId, transaction) {
         transaction.createdDate = new Date();
         transaction.userId = userId;
-        return db('transaction').insert(transaction);
+        const trans = await db('transaction').insert(transaction);
+        var listTrans = await db('transaction').where('courseId', transaction.courseId).andWhere('isDeleted', false);
+        console.log(listTrans.length);
+        var course = {
+            "participants": listTrans.length
+        };
+        course.modifiedDate = new Date();
+        await db('course').where('id', transaction.courseId).andWhere('isDeleted', false).update(course);
+        return trans;
     },
 
     async updatePayment(id){
