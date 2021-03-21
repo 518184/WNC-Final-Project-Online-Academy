@@ -92,9 +92,16 @@ router.post('/', auth(2), async function (req, res) {
                 message: 'Category: ' + course.categoryId + ' doesn\'t exist'
             });
         }
-        course.outline.uploadFilenames = uploadFilenames;
-        course.outline.uploadDir = uuid + "/";
-        course.outline = JSON.stringify(course.outline);
+        course.data = []
+        const data = {
+            content: course.outline,
+            uploadFilenames,
+            uploadDir: uuid + "/"
+        }
+        course.data.push(data);
+        course.outline = JSON.stringify({data: course.data})
+        delete course.data
+
         course.thumbnail = "LATER";
         const id_list = await courseModel.add(course);
         course.id = id_list[0];
