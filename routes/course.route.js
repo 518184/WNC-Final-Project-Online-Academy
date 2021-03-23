@@ -102,13 +102,15 @@ router.post('/', auth(2), async function (req, res) {
             });
         }
         course.data = []
-        const data = {
-            content: course.outline,
-            uploadFilenames,
-            uploadDir: uuid + "/"
-        }
-        course.data.push(data);
-        course.outline = JSON.stringify({data: course.data})
+        course.outline.map((e, index) => {
+            course.data.push({
+                content: e,
+                uploadFilename: uploadFilenames[index],
+                uploadDir: uuid + "/"
+            })
+        })
+
+        course.outline = JSON.stringify({ data: course.data })
         delete course.data
 
         course.thumbnail = "LATER";
