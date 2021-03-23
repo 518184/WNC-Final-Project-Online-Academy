@@ -162,7 +162,7 @@ router.get("/:courseId/resources/:resourceId", async (req, res) => {
 
 });
 
-router.put('/:courseId', auth(2), validate(course_schema), async function (req, res) {
+router.put('/:courseId', auth(2), async function (req, res) {
 
     const resourceDir = path.join(__dirname, '../resources/');
 
