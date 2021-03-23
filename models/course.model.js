@@ -20,6 +20,14 @@ module.exports = {
         return courseSpec[0];
     },
 
+    async allCourseTeacherID(id){
+        const courseSpec = await db('course').where('teacherId', id).andWhere('isDeleted', false);
+        if(courseSpec.length === 0){
+            return null;
+        }
+        return courseSpec;
+    },
+
     add(course){
         course.createdDate = new Date();
         return db('course').insert(course);

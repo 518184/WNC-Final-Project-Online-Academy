@@ -37,6 +37,15 @@ router.get('/category/:id', async function (req, res) {
     res.status(200).json(courseSpec);
 });
 
+router.get('/teacher/:id', auth(2), async function (req, res) {
+    const id = req.params.id || 0;
+    const courseSpec = await courseModel.allCourseTeacherID(id);
+    if (courseSpec === null) {
+        return res.status(204).end();
+    }
+    res.status(200).json(courseSpec);
+});
+
 router.post('/', auth(2), async function (req, res) {
     const resourceDir = path.join(__dirname, '../resources/');
 
