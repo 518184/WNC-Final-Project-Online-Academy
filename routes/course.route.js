@@ -153,36 +153,95 @@ router.get("/:courseId/resources/:resourceId", async (req, res) => {
 
 });
 
-router.put('/:id', auth(2), validate(course_schema), async function (req, res) {
-    const id = +req.params.id;
-    const course = req.body;
-    let dbCourse = await courseModel.single(id);
-    if (!dbCourse) {
-        return res.status(404).json({
-            message: 'CourseId: ' + id + ' doesn\'t exist'
-        });
+router.put('/:courseId', auth(2), validate(course_schema), async function (req, res) {
+
+    const resourceDir = path.join(__dirname, '../resources/');
+
+    const uuid = uuidv4()
+    const uploadDir = resourceDir + uuid;
+
+    if (!fs.existsSync(resourceDir)) {
+        fs.mkdirSync(resourceDir);
     }
-    if (req.headers.userId !== dbCourse.teacherId && req.headers.userType !== 3) {
-        return res.status(403).json({
-            message: 'Can\'t edit other user course'
-        });
-    }
-    let userid = await userModal.singleIDTeacher(course.teacherId);
-    if (!userid) {
-        return res.status(404).json({
-            message: 'Not allow user ID: ' + course.teacherId
-        });
-    }
-    let categoryid = await categoryModel.single(course.categoryId);
-    if (!categoryid) {
-        return res.status(404).json({
-            message: 'Category: ' + course.categoryId + ' doesn\'t exist'
-        });
+    if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir);
     }
 
-    const id_list = await courseModel.update(course, id);
-    course.id = id_list[0];
-    res.status(200).json(course);
+    const form = formidable({ multiples: true, uploadDir, keepExtensions: true, maxFileSize: 500 * 1024 * 1024 });
+
+    let course = {};
+
+    form.on('field', function (fieldName, fieldValue) {
+        if (fieldName === 'metadata') {
+            course = JSON.parse(fieldValue);
+        }
+
+    });
+
+    let uploadFilenames = []
+    form.on('file', function (field, file) {
+        const uploadName = uuidv4() + '.' + file.type.split('/')[1];
+        fs.rename(file.path, form.uploadDir + "/" + uploadName, (err) => {
+            uploadFilenames.push(uploadName);
+            if (err) {
+                throw new Error(err);
+            }
+        });
+    });
+
+    form.parse(req, (err, fields, files) => {
+        if (err) {
+            throw new Error(err);
+        }
+    })
+
+    form.on('end', async () => {
+        const courseId = +req.params.courseId;
+        let dbCourse = await courseModel.single(courseId);
+        if (!dbCourse) {
+            return res.status(404).json({
+                message: 'CourseId: ' + id + ' doesn\'t exist'
+            });
+        }
+        if (req.headers.userId !== dbCourse.teacherId && req.headers.userType !== 3) {
+            return res.status(403).json({
+                message: 'Can\'t edit other user course'
+            });
+        }
+
+        let categoryid = await categoryModel.single(course.categoryId);
+        if (!categoryid) {
+            return res.status(404).json({
+                message: 'Category: ' + course.categoryId + ' doesn\'t exist'
+            });
+        }
+
+        const courseData = JSON.parse(dbCourse.outline).data
+        let uploadDir = uuid + "/"
+
+        if (courseData && courseData.length > 0) {
+            uploadDir = courseData[0].uploadDir
+            course.data = courseData
+        }
+        else {
+            course.data = []
+        }
+        course.outline.map((e, index) => {
+            course.data.push({
+                content: e,
+                uploadFilename: uploadFilenames[index],
+                uploadDir: uploadDir
+            })
+        })
+
+        course.outline = JSON.stringify({ data: course.data })
+        delete course.data
+
+        course.thumbnail = "LATER";
+        const id_list = await courseModel.update(course, courseId);
+        course.id = id_list[0];
+        res.status(200).json(course);
+    })
 });
 
 router.delete('/:id', auth(3), async function (req, res) {
