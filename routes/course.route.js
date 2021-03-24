@@ -229,7 +229,7 @@ router.put('/:courseId', auth(2), async function (req, res) {
         let uploadDir = uuid + "/"
 
         if (courseData && courseData.length > 0) {
-            uploadDir = courseData[0].uploadDir
+            // uploadDir = courseData[0].uploadDir
             course.data = courseData
         }
         else {
