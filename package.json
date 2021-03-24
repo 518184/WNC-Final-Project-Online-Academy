@@ -36,6 +36,7 @@
     "nodemailer-smtp-transport": "^2.7.4",
     "otp-agent": "^1.0.4",
     "randomstring": "^1.1.5",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "ws": "^7.4.4"
   }
 }

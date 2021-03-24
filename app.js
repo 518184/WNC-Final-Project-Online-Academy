@@ -46,3 +46,5 @@ app.use((err, req, res, next) => {
 app.listen(PORT, function () {
     console.log(`Online Academy server is running at http://localhost:${PORT}`);
 });
+
+require('./ws');

@@ -13,6 +13,7 @@ const formidable = require('formidable');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
+const { broadcastAll } = require('../ws');
 
 router.get('/', async function (req, res) {
     const list = await courseModel.all();
@@ -113,7 +114,7 @@ router.post('/', auth(2), async function (req, res) {
         course.outline = JSON.stringify({ data: course.data })
         delete course.data
 
-        course.thumbnail = "LATER";
+        //course.thumbnail = "LATER";
         const id_list = await courseModel.add(course);
         course.id = id_list[0];
         res.status(201).json(course);
@@ -249,6 +250,8 @@ router.put('/:courseId', auth(2), async function (req, res) {
         course.thumbnail = "LATER";
         const id_list = await courseModel.update(course, courseId);
         course.id = id_list[0];
+        const msgToSend = JSON.stringify({'courseId':courseId, 'title':course.title});
+        broadcastAll(msgToSend);
         res.status(200).json(course);
     })
 });
