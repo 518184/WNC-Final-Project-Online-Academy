@@ -114,11 +114,7 @@ router.post('/', auth(2), async function (req, res) {
         course.outline = JSON.stringify({ data: course.data })
         delete course.data
 
-<<<<<<< HEAD
-        //course.thumbnail = "LATER";
-=======
         // course.thumbnail = "LATER";
->>>>>>> 66613a5cf7393d2c63569c7827d8b9dcaf60bcd4
         const id_list = await courseModel.add(course);
         course.id = id_list[0];
         res.status(201).json(course);
